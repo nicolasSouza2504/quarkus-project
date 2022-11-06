@@ -1,6 +1,7 @@
 package org.acme.resource;
 
-import org.acme.entity.User;
+import org.acme.entity.LoginUser;
+import org.acme.repository.UserRepository;
 import org.acme.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,7 +12,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/user")
 public class UserResource {
@@ -19,10 +19,13 @@ public class UserResource {
     @Inject
     UserService userService;
 
+    @Inject
+    UserRepository userRepository;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll() {
-        return Response.ok(new GsonBuilder().create().toJson(User.listAll())).build();
+        return Response.ok(new GsonBuilder().create().toJson(LoginUser.listAll())).build();
     }
 
     @POST
@@ -32,9 +35,16 @@ public class UserResource {
 
         Gson gson = new GsonBuilder().create();
 
-        User user = gson.fromJson(json, User.class);
+        LoginUser loginUser = gson.fromJson(json, LoginUser.class);
 
-        return Response.ok(gson.toJson(userService.saveUser(user))).build();
+        return Response.ok(gson.toJson(userService.saveUser(loginUser))).build();
+    }
+
+    @GET
+    @Path("find-by-name")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findByName(@QueryParam("name") String name) {
+        return Response.ok(new GsonBuilder().create().toJson(userRepository.findByName(name))).build();
     }
 
 }

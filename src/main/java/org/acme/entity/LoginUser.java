@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "login_user")
-public class User extends PanacheEntity {
+public class LoginUser extends PanacheEntity {
 
     @Column(name = "name")
     private String name;

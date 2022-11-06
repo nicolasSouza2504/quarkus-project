@@ -1,7 +1,7 @@
 package org.acme.service;
 
 import io.quarkus.runtime.util.StringUtil;
-import org.acme.entity.User;
+import org.acme.entity.LoginUser;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -14,26 +14,26 @@ import java.util.regex.Pattern;
 public class UserService {
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public User saveUser(User user) throws Exception {
+    public LoginUser saveUser(LoginUser loginUser) throws Exception {
 
-        validate(user);
-        user.persist();
+        validate(loginUser);
+        loginUser.persist();
 
-        return user;
+        return loginUser;
 
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private void validate(User user) throws Exception {
+    private void validate(LoginUser loginUser) throws Exception {
         List<String> errors = new ArrayList<>();
 
-        if (user != null) {
+        if (loginUser != null) {
 
-            if (StringUtil.isNullOrEmpty(user.getName())) {
+            if (StringUtil.isNullOrEmpty(loginUser.getName())) {
                 errors.add("Field 'name' need to be filled");
             }
 
-            validatePassword(user.getPassword(), errors);
+            validatePassword(loginUser.getPassword(), errors);
 
         } else {
             errors.add("Fill all the user fields");
