@@ -21,8 +21,8 @@ public class UserResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> findAll() {
-        return User.listAll();
+    public Response findAll() {
+        return Response.ok(new GsonBuilder().create().toJson(User.listAll())).build();
     }
 
     @POST
