@@ -6,8 +6,6 @@ import org.acme.service.UserService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-
-
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

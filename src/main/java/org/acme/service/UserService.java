@@ -1,6 +1,8 @@
 package org.acme.service;
 
 import io.quarkus.runtime.util.StringUtil;
+import org.acme.Message;
+import org.acme.UserValidationException;
 import org.acme.entity.LoginUser;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -47,7 +49,7 @@ public class UserService {
                 errorString += " * " + error + "; ";
             }
 
-            throw new Exception(errorString);
+            throw new UserValidationException(new Message(errorString));
 
         }
 
@@ -65,6 +67,9 @@ public class UserService {
             if (!Pattern.compile("['0-9']").matcher(password).find()) {
                 errors.add("Password doesnt contain numeric characters");
             }
+
+        } else {
+            errors.add("Fill password");
 
         }
 
