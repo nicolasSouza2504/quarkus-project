@@ -38,6 +38,19 @@ public class UserResource {
         return Response.ok(gson.toJson(userService.saveUser(loginUser))).build();
     }
 
+    @POST
+    @Path("login")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response login(String json) throws Throwable {
+
+        Gson gson = new GsonBuilder().create();
+
+        LoginUser loginUser = gson.fromJson(json, LoginUser.class);
+
+        return Response.ok(gson.toJson(userService.login(loginUser))).build();
+    }
+
     @GET
     @Path("find-by-name")
     @Produces(MediaType.APPLICATION_JSON)

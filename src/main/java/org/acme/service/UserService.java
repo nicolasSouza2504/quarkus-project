@@ -4,8 +4,10 @@ import io.quarkus.runtime.util.StringUtil;
 import org.acme.Message;
 import org.acme.UserValidationException;
 import org.acme.entity.LoginUser;
+import org.acme.repository.UserRepository;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -15,11 +17,23 @@ import java.util.regex.Pattern;
 @ApplicationScoped
 public class UserService {
 
+    @Inject
+    private UserRepository userRepository;
+
     @Transactional(Transactional.TxType.REQUIRED)
     public LoginUser saveUser(LoginUser loginUser) throws Exception {
 
         validate(loginUser);
         loginUser.persist();
+
+        return loginUser;
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public LoginUser login(LoginUser loginUser) throws Throwable {
+
+        LoginUser logedUser = userRepository.findUser(loginUser);
 
         return loginUser;
 
