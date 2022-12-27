@@ -33,15 +33,34 @@ public class UserService {
     @Transactional(Transactional.TxType.REQUIRED)
     public LoginUser login(LoginUser loginUser) throws Throwable {
 
-        LoginUser logedUser = userRepository.findUser(loginUser);
+        throwErrors(validateLoginFields(loginUser, null));
+        LoginUser registeredUser = userRepository.findUser(loginUser);
 
-        return loginUser;
+        if (registeredUser != null) {
+            return loginUser;
+        } else {
+            throw new UserValidationException(new Message("The password or name is incorrect"));
+        }
 
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
     private void validate(LoginUser loginUser) throws Exception {
+
         List<String> errors = new ArrayList<>();
+
+        validateLoginFields(loginUser, errors);
+        validatePassword(loginUser.getPassword(), errors);
+        throwErrors(errors);
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    private List<String> validateLoginFields(LoginUser loginUser, List<String> errors) throws Exception {
+
+        if (errors == null) {
+            errors = new ArrayList<>();
+        }
 
         if (loginUser != null) {
 
@@ -49,11 +68,33 @@ public class UserService {
                 errors.add("Field 'name' need to be filled");
             }
 
-            validatePassword(loginUser.getPassword(), errors);
+            if (StringUtil.isNullOrEmpty(loginUser.getPassword())) {
+                errors.add("Field 'password' need to be filled");
+            }
 
         } else {
             errors.add("Fill all the user fields");
         }
+
+        return errors;
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    private void validatePassword(String password, List<String> errors) throws Exception {
+
+        if (!Pattern.compile("[*&%$#@!\"']").matcher(password).find()) {
+            errors.add("Password doesnt contain especial characters");
+        }
+
+        if (!Pattern.compile("['0-9']").matcher(password).find()) {
+            errors.add("Password doesnt contain numeric characters");
+        }
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    private void throwErrors(List<String> errors) {
 
         if (!errors.isEmpty()) {
 
@@ -64,26 +105,6 @@ public class UserService {
             }
 
             throw new UserValidationException(new Message(errorString));
-
-        }
-
-    }
-
-    @Transactional(Transactional.TxType.REQUIRED)
-    private void validatePassword(String password, List<String> errors) throws Exception {
-
-        if (!StringUtil.isNullOrEmpty(password)) {
-
-            if (!Pattern.compile("[*&%$#@!\"']").matcher(password).find()) {
-                errors.add("Password doesnt contain especial characters");
-            }
-
-            if (!Pattern.compile("['0-9']").matcher(password).find()) {
-                errors.add("Password doesnt contain numeric characters");
-            }
-
-        } else {
-            errors.add("Fill password");
 
         }
 

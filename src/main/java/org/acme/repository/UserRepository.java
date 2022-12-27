@@ -15,16 +15,9 @@ public class UserRepository {
     }
     public LoginUser findUser(LoginUser loginUser) {
 
-        if (loginUser.getName() != null && !loginUser.getName().isEmpty()
-                && loginUser.getPassword() != null && !loginUser.getPassword().isEmpty()) {
+        PanacheQuery query = LoginUser.find("select us from LoginUser us where us.name = '" + loginUser.getName() + "' and us.password = '" +  loginUser.getPassword() + "'");
 
-        } else {
-            return null;
-        }
-
-//        PanacheQuery query = LoginUser.find("select us from LoginUser us where us.name = '" + loginUser + "'");
-//        return query.list();
-        return null;
+        return (LoginUser) query.firstResult();
     }
 
 }
