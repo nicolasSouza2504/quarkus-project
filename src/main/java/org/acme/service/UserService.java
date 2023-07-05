@@ -6,8 +6,10 @@ import org.acme.UserValidationException;
 import org.acme.entity.LoginUser;
 import org.acme.repository.UserRepository;
 
+import javax.annotation.ManagedBean;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -20,6 +22,9 @@ public class UserService {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private EntityManager entityManager;
+
     @Transactional(Transactional.TxType.REQUIRED)
     public LoginUser saveUser(LoginUser loginUser) throws Exception {
 
@@ -27,6 +32,22 @@ public class UserService {
         loginUser.persist();
 
         return loginUser;
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public LoginUser updateUser(LoginUser loginUser) throws Exception {
+
+        LoginUser login = LoginUser.findById(loginUser.id);
+
+        login.setName(loginUser.getName());
+        login.setPassword(loginUser.getPassword());
+
+        validate(login);
+
+        entityManager.merge(login);
+
+        return login;
 
     }
 
@@ -56,7 +77,7 @@ public class UserService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private List<String> validateLoginFields(LoginUser loginUser, List<String> errors) throws Exception {
+    private List<String> validateLoginFields(LoginUser loginUser, List<String> errors) {
 
         if (errors == null) {
             errors = new ArrayList<>();

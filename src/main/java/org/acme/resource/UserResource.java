@@ -58,4 +58,16 @@ public class UserResource {
         return Response.ok(new GsonBuilder().create().toJson(userRepository.findByName(name))).build();
     }
 
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response update(String json) throws Exception {
+
+        Gson gson = new GsonBuilder().create();
+
+        LoginUser loginUser = gson.fromJson(json, LoginUser.class);
+
+        return Response.ok(gson.toJson(userService.updateUser(loginUser))).build();
+    }
+
 }
