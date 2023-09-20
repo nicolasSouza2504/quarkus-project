@@ -1,5 +1,6 @@
 package org.acme.service;
 
+import antlr.StringUtils;
 import io.quarkus.runtime.util.StringUtil;
 import org.acme.Message;
 import org.acme.UserValidationException;
@@ -29,7 +30,8 @@ public class UserService {
     public LoginUser saveUser(LoginUser loginUser) throws Exception {
 
         validate(loginUser);
-        loginUser.persist();
+
+        entityManager.persist(loginUser);
 
         return loginUser;
 
@@ -72,6 +74,7 @@ public class UserService {
 
         validateLoginFields(loginUser, errors);
         validatePassword(loginUser.getPassword(), errors);
+
         throwErrors(errors);
 
     }
@@ -128,6 +131,30 @@ public class UserService {
             throw new UserValidationException(new Message(errorString));
 
         }
+
+    }
+
+    @Transactional(Transactional.TxType.REQUIRED)
+    public void removeUser(String id) {
+
+        List<String> errors = new ArrayList<>();
+
+        if (!StringUtil.isNullOrEmpty(id)) {
+
+            LoginUser user = LoginUser.findById(new Long(id));
+
+            if (user != null) {
+                entityManager.remove(user);
+            } else {
+                errors.add("User not found!");
+            }
+
+
+        } else {
+            errors.add("ID can't be null!");
+        }
+
+        throwErrors(errors);
 
     }
 

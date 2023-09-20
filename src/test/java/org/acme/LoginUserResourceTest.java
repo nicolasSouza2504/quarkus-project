@@ -1,21 +1,47 @@
 package org.acme;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.response.ValidatableResponse;
+import io.restassured.specification.RequestSpecification;
+import org.acme.entity.LoginUser;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 
 @QuarkusTest
 public class LoginUserResourceTest {
 
     @Test
-    public void testHelloEndpoint() {
+    public void testeInsertDeleteUser() {
+
+        String jsonUser = "{\n" +
+                "    \"name\": \"user-teste\",\n" +
+                "    \"password\": \"userTeste123#\"\n" +
+                "}";
+
+        String resBody = given()
+                .contentType("application/json")
+                .body(jsonUser)
+                .when()
+                .post("/user")
+                .then()
+                .statusCode(200)
+                .body("name", equalTo("user-teste"))
+                .body("password", equalTo("userTeste123#")).extract().body().asString();
+
+        Gson gson = new GsonBuilder().create();
+
+        LoginUser user = gson.fromJson(resBody, LoginUser.class);
+
         given()
-          .when().get("/hello")
-          .then()
-             .statusCode(200)
-             .body(is("Hello RESTEasy"));
+                .when()
+                .delete("/user/remove/" + user.id)
+                .then()
+                .statusCode(200)
+                .body(containsString("User " + user.id + " has been removed"));
     }
 
 }

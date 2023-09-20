@@ -36,6 +36,7 @@ public class UserResource {
         LoginUser loginUser = gson.fromJson(json, LoginUser.class);
 
         return Response.ok(gson.toJson(userService.saveUser(loginUser))).build();
+
     }
 
     @POST
@@ -68,6 +69,18 @@ public class UserResource {
         LoginUser loginUser = gson.fromJson(json, LoginUser.class);
 
         return Response.ok(gson.toJson(userService.updateUser(loginUser))).build();
+    }
+
+    @DELETE
+    @Path("remove/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response delete(@PathParam("id") String id) {
+
+        userService.removeUser(id);
+
+        return Response.ok("User " + id + " has been removed").build();
+
     }
 
 }
