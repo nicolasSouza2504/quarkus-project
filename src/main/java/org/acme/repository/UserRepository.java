@@ -3,7 +3,7 @@ package org.acme.repository;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import org.acme.entity.LoginUser;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 
 @ApplicationScoped

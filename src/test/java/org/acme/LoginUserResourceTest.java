@@ -3,13 +3,12 @@ package org.acme;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
 import org.acme.entity.LoginUser;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 @QuarkusTest
 public class LoginUserResourceTest {

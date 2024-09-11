@@ -1,17 +1,14 @@
 package org.acme.service;
 
-import antlr.StringUtils;
-import io.quarkus.runtime.util.StringUtil;
+import io.netty.util.internal.StringUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.acme.Message;
 import org.acme.UserValidationException;
 import org.acme.entity.LoginUser;
 import org.acme.repository.UserRepository;
-
-import javax.annotation.ManagedBean;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +18,10 @@ import java.util.regex.Pattern;
 public class UserService {
 
     @Inject
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     @Inject
-    private EntityManager entityManager;
+    EntityManager entityManager;
 
     @Transactional(Transactional.TxType.REQUIRED)
     public LoginUser saveUser(LoginUser loginUser) throws Exception {
@@ -68,7 +65,7 @@ public class UserService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private void validate(LoginUser loginUser) throws Exception {
+    public void validate(LoginUser loginUser) throws Exception {
 
         List<String> errors = new ArrayList<>();
 
@@ -80,7 +77,7 @@ public class UserService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private List<String> validateLoginFields(LoginUser loginUser, List<String> errors) {
+    public List<String> validateLoginFields(LoginUser loginUser, List<String> errors) {
 
         if (errors == null) {
             errors = new ArrayList<>();
@@ -105,7 +102,7 @@ public class UserService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private void validatePassword(String password, List<String> errors) throws Exception {
+    public void validatePassword(String password, List<String> errors) throws Exception {
 
         if (!Pattern.compile("[*&%$#@!\"']").matcher(password).find()) {
             errors.add("Password doesnt contain especial characters");
@@ -118,7 +115,7 @@ public class UserService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    private void throwErrors(List<String> errors) {
+    public void throwErrors(List<String> errors) {
 
         if (!errors.isEmpty()) {
 
